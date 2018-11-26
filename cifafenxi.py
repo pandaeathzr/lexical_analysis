@@ -132,7 +132,8 @@ def asnalysis_attribute(object_dict):
 '''-----------------------------------------------'''
 '''###***词法分析器主体函数***###'''
 def lexical_analysis(row):
-
+    
+    row = Delete_comment(row)
     word_list = get_word(row)
     attribute_dict = get_attribute(word_list)
     asnalysis_attribute(attribute_dict)
