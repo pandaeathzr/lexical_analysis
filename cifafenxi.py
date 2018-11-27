@@ -34,22 +34,55 @@ def Delete_comment(row):
 def get_word(row):
     word = ''
     answer = []
-    for char in row:
-        if char not in Separators:
-            word += char
-        else:
-            if (word != ''):
-                answer.append(word)  #可以对单词的判断？
-                word = ''
+    flag1 = 0
+    flag2 = 0
 
-            if char in  Delimiter + Operator  + other:
-                answer.append(char)
+    for char in row:
+
+        if char =='"' and flag1 == 0:
+
+            flag1 =1
+            continue
+        if flag1 == 1 and flag2 == 0:
+            if char == "\\":
+                flag2 = 1
+                continue
+            elif char == '"':
+                answer.append('"'+word+'"')
+                word = ''
+                flag1 = 0
+                continue
+            else:
+                word +=char
+                continue
+
+        if flag1 == 1 and flag2 == 1:
+            word +=char
+            flag2 = 0
+            continue
+
+        if flag1 == 0:
+            if char not in Separators:
+                word += char
+            else:
+                if (word != ''):
+                    # print(str(flag1)+word)
+                    answer.append(word)  #可以对单词的判断？
+                    word = ''
+
+                if char in  Delimiter + Operator  + other:
+                    answer.append(char)
     return answer
 
 '''-----------------------------------------------'''
 '''-----------------------------------------------'''
 '''-----------------------------------------------'''
-
+'''###***处理转义字符***###'''
+def escape_processing():
+    pass
+'''-----------------------------------------------'''
+'''-----------------------------------------------'''
+'''-----------------------------------------------'''
 '''###***转换进制***###'''
 def binary_conversion(word):
     word = word.lower()   #处理大小写
@@ -71,6 +104,11 @@ def get_attribute(answer):
     result = {}
     i = 0
     while i < len(answer):
+        if answer[i][0] == '"':
+            # print(answer[i])
+            result[answer[i]+'_'+'%d'%i] = 'string'
+            i +=1
+            continue
         if answer[i] in Identifier:
             result[answer[i]+'_'+'%d'%i] = 'identifier'
             i +=1
@@ -106,6 +144,7 @@ def get_attribute(answer):
 
         result[answer[i]+'_'+'%d'%i] = 'id'
         i +=1
+
     return result
 
 '''-----------------------------------------------'''
@@ -114,29 +153,32 @@ def get_attribute(answer):
 '''###***分析属性并输出***###'''
 def asnalysis_attribute(object_dict):
 
+    result = []
+
     for key in object_dict:
         if(object_dict[key]=='num'):
-            print('<num,'+key.split('_')[0]+'>')
+            result.append('<num,'+key.split('_')[0]+'>')
         elif(object_dict[key]=='id'):
-            print('<id,'+key.split('_')[0]+'>')
+            result.append('<id,'+key.split('_')[0]+'>')
         elif(object_dict[key]=='operator'):
-            print('<'+key.split('_')[0]+'>')
+            result.append('<'+key.split('_')[0]+'>')
         elif(object_dict[key]=='delimiter'):
-            print('<'+key.split('_')[0]+'>')
+            result.append('<'+key.split('_')[0]+'>')
         elif(object_dict[key]=='identifier'):
-            print('<'+key.split('_')[0]+'>')
-
-
+            result.append('<'+key.split('_')[0]+'>')
+        elif(object_dict[key]=='string'):
+            result.append('<string,'+key.split('_')[0]+'>')
+    return result
 '''-----------------------------------------------'''
 '''-----------------------------------------------'''
 '''-----------------------------------------------'''
 '''###***词法分析器主体函数***###'''
 def lexical_analysis(row):
-    
+
     row = Delete_comment(row)
     word_list = get_word(row)
     attribute_dict = get_attribute(word_list)
-    asnalysis_attribute(attribute_dict)
+    return asnalysis_attribute(attribute_dict)
 
 '''-----------------------------------------------'''
 '''-----------------------------------------------'''
@@ -152,6 +194,7 @@ def lexical_analysis(row):
 
 
 if __name__ == '__main__':
-    row = 'WHILE (next<>NIL) DO BEGIN x:=6; Y:=xy+z END; // 这是一个注释'
+    row = r'WHILE (next<>NIL) DO BEGIN x:="asas\"\\\\\\"; Y:=xy+z END; // 这是一个注释'
     row = Delete_comment(row)
-    lexical_analysis(row)
+    for x in lexical_analysis(row):
+        print(x)
