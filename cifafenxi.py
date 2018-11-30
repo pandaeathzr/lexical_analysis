@@ -175,33 +175,43 @@ def asnalysis_attribute(object_dict):
 '''-----------------------------------------------'''
 '''###***符号表***###'''
 
-def fuhaobiao (object_dict):
-    result = []
+def fuhaobiao (rows):
+    all = []
+    for row in rows:
 
-    for key in object_dict:
-        if(object_dict[key]=='num'):
-            result.append('<num,'+key.split('_')[0]+'>')
-        elif(object_dict[key]=='id'):
-            result.append('<id,'+key.split('_')[0]+'>')
-        elif(object_dict[key]=='string'):
-            result.append('<string,'+key.split('_')[0]+'>')
-        elif(object_dict[key]=='identifier'):
-            result.append('<identifier,'+key.split('_')[0]+'>')
+        word_list = get_word(row)
+        object_dict = get_attribute(word_list)
 
-    result = list(set(result))
 
-    return result
+        result = []
+        for key in object_dict:
+            if(object_dict[key]=='num'):
+                result.append('<num,'+key.split('_')[0]+'>')
+            elif(object_dict[key]=='id'):
+                result.append('<id,'+key.split('_')[0]+'>')
+            elif(object_dict[key]=='string'):
+                result.append('<string,'+key.split('_')[0]+'>')
+            elif(object_dict[key]=='identifier'):
+                result.append('<identifier,'+key.split('_')[0]+'>')
+
+        result = list(set(result))
+        all.append(result)
+    return all
 
 
 '''-----------------------------------------------'''
 '''-----------------------------------------------'''
 '''-----------------------------------------------'''
 '''###***词法分析器主体函数***###'''
-def lexical_analysis(row):
+def lexical_analysis(rows):
+    all = []
+    for row in rows:
 
-    word_list = get_word(row)
-    attribute_dict = get_attribute(word_list)
-    return asnalysis_attribute(attribute_dict)
+        word_list = get_word(row)
+        attribute_dict = get_attribute(word_list)
+        all.append (asnalysis_attribute(attribute_dict))
+
+    return all
 
 '''-----------------------------------------------'''
 '''-----------------------------------------------'''
