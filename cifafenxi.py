@@ -169,13 +169,36 @@ def asnalysis_attribute(object_dict):
         elif(object_dict[key]=='string'):
             result.append('<string,'+key.split('_')[0]+'>')
     return result
+
+'''-----------------------------------------------'''
+'''-----------------------------------------------'''
+'''-----------------------------------------------'''
+'''###***符号表***###'''
+
+def fuhaobiao (object_dict):
+    result = []
+
+    for key in object_dict:
+        if(object_dict[key]=='num'):
+            result.append('<num,'+key.split('_')[0]+'>')
+        elif(object_dict[key]=='id'):
+            result.append('<id,'+key.split('_')[0]+'>')
+        elif(object_dict[key]=='string'):
+            result.append('<string,'+key.split('_')[0]+'>')
+        elif(object_dict[key]=='identifier'):
+            result.append('<identifier,'+key.split('_')[0]+'>')
+
+    result = list(set(result))
+
+    return result
+
+
 '''-----------------------------------------------'''
 '''-----------------------------------------------'''
 '''-----------------------------------------------'''
 '''###***词法分析器主体函数***###'''
 def lexical_analysis(row):
 
-    row = Delete_comment(row)
     word_list = get_word(row)
     attribute_dict = get_attribute(word_list)
     return asnalysis_attribute(attribute_dict)
@@ -194,7 +217,13 @@ def lexical_analysis(row):
 
 
 if __name__ == '__main__':
-    row = r'WHILE (next<>NIL) DO BEGIN x:="asas\"\\\\\\"; Y:=xy+z END; // 这是一个注释'
+    row = r'WHILE (next<>NIL) DO BEGIN x x x:="asas\"\\\\\\"; Y:=xy+z END; // 这是一个注释'
     row = Delete_comment(row)
     for x in lexical_analysis(row):
+        print(x)
+
+    print ("-0000000000000000000000000000-")
+    word_list = get_word(row)
+    attribute_dict = get_attribute(word_list)
+    for x in fuhaobiao(attribute_dict):
         print(x)
